@@ -29,7 +29,7 @@ resource "aws_subnet" "private-1b" {
 
 resource "aws_db_subnet_group" "default" {
   name       = "portal-listing-platform-db-subnet-group"
-  subnet_ids = [aws_subnet.public-1a.id, aws_subnet.private-1a.id, aws_subnet.private-1b.id]
+  subnet_ids = [aws_subnet.private-1a.id, aws_subnet.private-1b.id]
   tags = {
     Name        = "portal-listing-platform-db-subnet-group"
   }
