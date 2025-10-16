@@ -24,6 +24,20 @@ resource "aws_security_group" "rds_sg" {
     cidr_blocks = ["5.32.104.122/32"]
   }
 
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["5.161.41.67/32"]
+  }
+
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["92.98.7.185/32"] # vicente's home wifi. to be deleted later
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
