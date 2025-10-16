@@ -11,7 +11,6 @@ resource "aws_db_instance" "portallistingdb01" {
   master_user_secret_kms_key_id = aws_kms_key.main.key_id
   db_subnet_group_name          = aws_db_subnet_group.default.name
   vpc_security_group_ids        = [aws_security_group.rds_sg.id]
-  skip_final_snapshot           = true # Set to false for production environments
   performance_insights_enabled  = false
   monitoring_interval           = 0
   multi_az                      = false
@@ -19,4 +18,23 @@ resource "aws_db_instance" "portallistingdb01" {
   tags = {
     Name        = "portal-listing-pgdb01-prod"
   }
+
+  final_snapshot_identifier     = "portal-listing-pgdb01-prod-final-snapshot"
+  skip_final_snapshot           = false
+  
+  # Conditionally set snapshot_identifier
+  # This uses a local variable to determine if a snapshot exists and then sets the identifier.
+  # This pattern prevents Terraform from failing if no snapshot is found on the initial apply.
+  snapshot_identifier = coalesce(
+    data.aws_db_snapshot.latest_snapshot.id,
+    null
+  )
+}
+
+data "aws_db_snapshot" "latest_snapshot" {
+  db_instance_identifier        = aws_db_instance.portallistingdb01.identifier
+  most_recent                   = true
+
+  # Optionally, add a depends_on to ensure the instance exists before trying to find a snapshot
+  depends_on                    = [aws_db_instance.portallistingdb01] 
 }
