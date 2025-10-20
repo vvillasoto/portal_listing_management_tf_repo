@@ -10,27 +10,6 @@ resource "aws_security_group" "rds_sg" {
     cidr_blocks = [aws_subnet.public-1a.cidr_block]
   }
 
-  ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = ["5.195.105.70/32"]
-  }
-
-  ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = ["5.32.104.122/32"]
-  }
-
-  ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = ["5.161.41.67/32"]
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
