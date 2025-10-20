@@ -1,11 +1,3 @@
-data "aws_db_snapshot" "latest_snapshot" {
-  db_instance_identifier        = aws_db_instance.portallistingdb01.identifier
-  most_recent                   = true
-
-  # Optionally, add a depends_on to ensure the instance exists before trying to find a snapshot
-  # depends_on                    = [aws_db_instance.portallistingdb01] 
-}
-
 resource "aws_db_instance" "portallistingdb01" {
   identifier                    = "portal-listing-pgdb01-prod"
   allocated_storage             = 20
@@ -22,21 +14,14 @@ resource "aws_db_instance" "portallistingdb01" {
   performance_insights_enabled  = false
   monitoring_interval           = 0
   multi_az                      = false
-  deletion_protection           = true
-  tags = {
-    Name        = "portal-listing-pgdb01-prod"
+  deletion_protection           = false
+  final_snapshot_identifier     = "portal-listing-pgdb01-prod-final-snapshot-${formatdate("YYYYMMDDhhmmss", timestamp())}"
+  skip_final_snapshot           = false
+  publicly_accessible           = false
+  storage_encrypted             = true
+  kms_key_id                    = aws_kms_key.main.arn
+  tags                          = {
+    Name                        = "portal-listing-pgdb01-prod"
   }
-
-  final_snapshot_identifier     = "portal-listing-pgdb01-prod-final-snapshot"
-  skip_final_snapshot           = true
-
-  publicly_accessible  = true
   
-  # Conditionally set snapshot_identifier
-  # This uses a local variable to determine if a snapshot exists and then sets the identifier.
-  # This pattern prevents Terraform from failing if no snapshot is found on the initial apply.
-  #snapshot_identifier = coalesce(
-  #  data.aws_db_snapshot.latest_snapshot.id,
-  #  null
-  #)
 }
